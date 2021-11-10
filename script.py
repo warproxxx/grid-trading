@@ -1,5 +1,8 @@
 import argparse
 from liveTrader import liveTrading
+import time
+import pandas as pd
+import threading
 
 parser = argparse.ArgumentParser("Grid Trader")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
@@ -10,10 +13,14 @@ parser.add_argument("--leverage", help="Leverage to use", type=int, default=10)
 
 
 params = vars(parser.parse_args())
-print(params)
+
+
 
 lt = liveTrading()
 lt.set_leverage()
+
+def add_order(order_type, amount, price):
+    t = threading.Thread(target=(lt.limit_trade), args=(order_type, amount, price,))
 
 def perform_once(reset=False):
     obook = lt.get_orderbook()
@@ -25,8 +32,16 @@ def perform_once(reset=False):
             lt.close_all_orders()
 
         orders_df = pd.DataFrame(lt.get_all_orders())
-        
         amt = lt.get_balance() * params['leverage']
+
+        start_time = time.time()
+
+        if len(orders_df) > 0:
+            orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
+        else:
+            orders = {}
+
+        
         total = obook['best_bid'] * amt
         totalOrders = params['orderAbove'] + params['orderBelow']
 
@@ -36,10 +51,30 @@ def perform_once(reset=False):
 
         print("Starting at {}".format(curr_price))
 
-        for i in range(curr_price+params['divNumber'], int(curr_price+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber']):
-            print(i)
+        above_points = [i for i in range(curr_price+params['divNumber'], int(curr_price+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber'])]
+        below_points = [i for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
+        
+        
+        for point in above_points:
+            try:
+                del orders[point]
+            except:
+                pass
 
+        for point in below_points:
+            try:
+                del orders[point]
+            except:
+                pass
 
-        for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1):
-            print(i)
+        for i in above_points:
+            if i not in orders:
+                add_order('sell', single_size, i)
 
+        for i in below_points:
+            if i not in orders:
+                add_order('buy', single_size, i)
+
+        print(time.time() - start_time)
+
+perform_once()

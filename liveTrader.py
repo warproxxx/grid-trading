@@ -66,25 +66,53 @@ class liveTrading():
         return self.get_unfilled_orders() + self.get_partial_orders()
 
     def get_unfilled_orders(self):
-        return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'New'})['result']['data']
+        count = 0
+        
+        while count < 5:
+            try:
+                return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'New'})['result']['data']
+            except Exception as e:
+                print(str(e))
+                count = count + 1
 
     def get_partial_orders(self):
-        return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'PartiallyFilled'})['result']['data']
+        count = 0
+        
+        while count < 5:
+            try:
+                return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'PartiallyFilled'})['result']['data']
+            except Exception as e:
+                print(str(e))
+                count = count + 1
 
     def close_all_orders(self, close_stop=False):
         self.exchange.cancel_all_orders(symbol=self.symbol)
 
     def get_orderbook(self):
-        orderbook = {}
+        count = 0
+        
+        while count < 5:
+            try:
+                orderbook = {}
 
-        book = self.exchange.fetch_order_book(self.symbol)
-        orderbook['best_ask'] =  book['asks'][0][0]
-        orderbook['best_bid'] = book['bids'][0][0]
+                book = self.exchange.fetch_order_book(self.symbol)
+                orderbook['best_ask'] =  book['asks'][0][0]
+                orderbook['best_bid'] = book['bids'][0][0]
 
-        return orderbook
+                return orderbook
+            except Exception as e:
+                print(str(e))
+                count = count + 1
 
     def cancel_order(self, order_id):
-        self.exchange.v2_private_post_order_cancel({'symbol': self.symbol_here, 'order_id': order_id})
+        count = 0
+        
+        while count < 5:
+            try:
+                self.exchange.v2_private_post_order_cancel({'symbol': self.symbol_here, 'order_id': order_id})
+            except Exception as e:
+                print(str(e))
+                count = count + 1
 
     def get_position(self):
         for lp in range(self.attempts):
@@ -143,22 +171,6 @@ class liveTrading():
         else:
             print("Doing a zero trade")
             return []
-
-    def send_limit_order(self, order_type):
-        for lp in range(self.attempts):
-            try:
-                amount, price = self.get_max_amount(order_type)
-
-                if amount == 0:
-                    return [], 0
-
-                order = self.limit_trade(order_type, amount, price)
-
-                return order, price
-            except ccxt.BaseError as e:
-                print(e)
-                pass
-
     
     def market_trade(self, order_type, amount):
         if amount > 0:
