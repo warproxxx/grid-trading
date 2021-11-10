@@ -86,7 +86,14 @@ class liveTrading():
                 count = count + 1
 
     def close_all_orders(self, close_stop=False):
-        self.exchange.cancel_all_orders(symbol=self.symbol)
+        count = 0
+        
+        while count < 5:
+            try:
+                self.exchange.cancel_all_orders(symbol=self.symbol)
+            except Exception as e:
+                print(str(e))
+                count = count + 1
 
     def get_orderbook(self):
         count = 0
@@ -110,6 +117,8 @@ class liveTrading():
         while count < 5:
             try:
                 self.exchange.v2_private_post_order_cancel({'symbol': self.symbol_here, 'order_id': order_id})
+                print("Canceled order {}".format(order_id))
+                return
             except Exception as e:
                 print(str(e))
                 count = count + 1

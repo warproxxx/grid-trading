@@ -14,9 +14,10 @@ def round_down(x, divNumber):
 parser = argparse.ArgumentParser("Grid Trader")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
 parser.add_argument("--maxOrder", help="Size of single order", type=int, default=10)
-parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=5)
-parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=5)
+parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=50)
+parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=50)
 parser.add_argument("--startPrice", help="Only starts if the current price is in the given range inputted here", type=int, default=-1)
+parser.add_argument("--sleepTime", help="Seconds delayed", type=int, default=60)
 
 params = vars(parser.parse_args())
 
@@ -53,9 +54,15 @@ def perform_once(reset=False):
 
         print("Starting at {} {}".format(curr_up, curr_down))
 
-        above_points = [i for i in range(curr_up, int(curr_up+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber'])]
-        below_points = [i for i in range(curr_down, int(curr_down-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
-    
+        above_points = [i for i in range(curr_up, int(curr_up+((params['orderAbove']) * params['divNumber'])), params['divNumber'])]
+        below_points = [i for i in range(curr_down, int(curr_down-((params['orderBelow']) * params['divNumber'])), params['divNumber'] * -1)]
+
+        for order in orders:
+            if int(order) not in above_points and int(order) not in below_points:
+
+                print("Removing {}".format(order))
+                remove_order(orders[order]['order_id'])
+
 
         for i in above_points:
             if i not in orders:
@@ -65,9 +72,7 @@ def perform_once(reset=False):
             if i not in orders:
                 add_order('buy', params['maxOrder'], i)
 
-        for point in above_points + below_points:
-            if point in orders:
-                remove_order(orders[point]['order_id'])
+
 
         print(time.time() - start_time)
 
@@ -75,13 +80,13 @@ def perform_all():
     curr_count = 0
 
     while True:
-        if (curr_count  == 60):
+        if (curr_count == 60):
             curr_count = 0
             perform_once(reset=True)
         else:
             perform_once()
 
-        time.sleep(60)
+        time.sleep(params['sleepTime'])
         curr_count = curr_count + 1
 
 if __name__ == "__main__":
