@@ -156,16 +156,6 @@ class liveTrading():
             }
 
             order = self.exchange.create_order(self.symbol, type='limit', side=order_type, amount=amount, price=price, params=params)
-            
-            try:
-                order_id = order['info']['order_id']
-            except:
-                order_id = order['info'][0]['order_id']
-
-            order = self.exchange.fetch_order(order_id, symbol=self.symbol)
-
-            if order['info']['order_status'] == 'Cancelled':
-                return self.limit_trade(order_type, amount, price)
 
             return order
         else:

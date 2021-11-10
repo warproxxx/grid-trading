@@ -11,16 +11,14 @@ parser.add_argument("--orderBelow", help="Number of orders below current price",
 parser.add_argument("--startPrice", help="Only starts if the current price is in the given range inputted here", type=int, default=-1)
 parser.add_argument("--leverage", help="Leverage to use", type=int, default=10)
 
-
 params = vars(parser.parse_args())
-
-
 
 lt = liveTrading()
 lt.set_leverage()
 
 def add_order(order_type, amount, price):
     t = threading.Thread(target=(lt.limit_trade), args=(order_type, amount, price,))
+    t.start()
 
 def perform_once(reset=False):
     obook = lt.get_orderbook()
@@ -45,7 +43,7 @@ def perform_once(reset=False):
         total = obook['best_bid'] * amt
         totalOrders = params['orderAbove'] + params['orderBelow']
 
-        single_size = (total/totalOrders)/obook['best_bid']
+        single_size = int(total/totalOrders)
         print(single_size)
         
 
@@ -77,4 +75,18 @@ def perform_once(reset=False):
 
         print(time.time() - start_time)
 
-perform_once()
+def perform_all():
+    curr_count = 0
+
+    while True:
+        if (curr_count  == 60):
+            curr_count = 0
+            perform_once(reset=True)
+        else:
+            perform_once()
+
+        time.sleep(60)
+        curr_count = curr_count + 1
+
+if __name__ == "__main__":
+    perform_once() #call perform_all instead on live
