@@ -20,6 +20,10 @@ def add_order(order_type, amount, price):
     t = threading.Thread(target=(lt.limit_trade), args=(order_type, amount, price,))
     t.start()
 
+def remove_order(order_id):
+    t = threading.Thread(target=(lt.cancel_order), args=(order_id,))
+    t.start()
+
 def perform_once(reset=False):
     obook = lt.get_orderbook()
     curr_price = int(round(obook['best_bid'], -1))
@@ -44,17 +48,7 @@ def perform_once(reset=False):
         below_points = [i for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
         
         
-        for point in above_points:
-            try:
-                del orders[point]
-            except:
-                pass
-
-        for point in below_points:
-            try:
-                del orders[point]
-            except:
-                pass
+        
 
         for i in above_points:
             if i not in orders:
@@ -63,6 +57,10 @@ def perform_once(reset=False):
         for i in below_points:
             if i not in orders:
                 add_order('buy', params['maxOrder'], i)
+
+        for point in above_points + below_points:
+            if point in orders:
+                self.remove_order(orders[point]['order_id'])
 
         print(time.time() - start_time)
 
