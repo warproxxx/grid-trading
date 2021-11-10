@@ -47,8 +47,6 @@ def perform_once(reset=False):
         above_points = [i for i in range(curr_price+params['divNumber'], int(curr_price+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber'])]
         below_points = [i for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
         
-        
-        
 
         for i in above_points:
             if i not in orders:
@@ -60,7 +58,7 @@ def perform_once(reset=False):
 
         for point in above_points + below_points:
             if point in orders:
-                self.remove_order(orders[point]['order_id'])
+                remove_order(orders[point]['order_id'])
 
         print(time.time() - start_time)
 
