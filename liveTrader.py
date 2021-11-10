@@ -111,7 +111,7 @@ class liveTrading():
     def get_balance(self):
         for lp in range(self.attempts):
             try:
-                return float(self.exchange.fetch_balance()['info']['result']['BTC']['available_balance'])
+                return float(self.exchange.fetch_balance()['info']['result']['BTC']['equity'])
             except Exception as e:
                 print(str(e))
 
