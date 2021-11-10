@@ -84,10 +84,6 @@ class liveTrading():
         self.exchange.v2_private_post_order_cancel({'symbol': self.symbol_here, 'order_id': order_id})
 
     def get_position(self):
-        '''
-        Returns position (LONG, SHORT, NONE), average entry price and current quantity
-        '''
-
         for lp in range(self.attempts):
             try:
                 pos = self.exchange.v2_private_get_position_list(params={'symbol': self.symbol_here})['result']
@@ -121,9 +117,6 @@ class liveTrading():
 
 
     def limit_trade(self, order_type, amount, price):
-        '''
-        Performs limit trade detecting exchange for the given amount
-        '''
         if amount > 0:
             print("Sending limit {} order for {} of size {} @ {} on {} in {}".format(order_type, self.symbol, amount, price, 'bybit', datetime.datetime.utcnow()))
 
@@ -149,9 +142,6 @@ class liveTrading():
             return []
 
     def send_limit_order(self, order_type):
-        '''
-        Detects amount and sends limit order for that amount
-        '''
         for lp in range(self.attempts):
             try:
                 amount, price = self.get_max_amount(order_type)
@@ -168,10 +158,6 @@ class liveTrading():
 
     
     def market_trade(self, order_type, amount):
-        '''
-        Performs market trade detecting exchange for the given amount
-        '''
-
         if amount > 0:
             print("Sending market {} order for {} of size {} on {} in {}".format(order_type, self.symbol, amount, 'bybit', datetime.datetime.utcnow()))
 
@@ -181,17 +167,3 @@ class liveTrading():
         else:
             print("Doing a zero trade")
             return []
-
-    def send_market_order(self, order_type):
-        '''
-        Detects amount and market buys/sells the amount
-        '''
-        for lp in range(self.attempts):
-            try:
-                self.close_open_orders()
-                amount, price = self.get_max_amount(order_type)
-                order = self.market_trade(order_type, amount)     
-                return order, price      
-            except ccxt.BaseError as e:
-                print(e)
-                pass
