@@ -3,12 +3,19 @@ from liveTrader import liveTrading
 import time
 import pandas as pd
 import threading
+import math
+
+def round_up(x, divNumber):
+    return int(math.ceil(x / divNumber)) * divNumber
+
+def round_down(x, divNumber):
+    return int(math.floor(x / divNumber)) * divNumber
 
 parser = argparse.ArgumentParser("Grid Trader")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
 parser.add_argument("--maxOrder", help="Size of single order", type=int, default=10)
-parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=50)
-parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=50)
+parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=5)
+parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=5)
 parser.add_argument("--startPrice", help="Only starts if the current price is in the given range inputted here", type=int, default=-1)
 
 params = vars(parser.parse_args())
@@ -26,9 +33,11 @@ def remove_order(order_id):
 
 def perform_once(reset=False):
     obook = lt.get_orderbook()
-    curr_price = int(round(obook['best_bid'], -1))
 
-    if params['startPrice'] == -1 or curr_price == params['startPrice']:
+    curr_up = int(round_up(obook['best_bid'], params['divNumber']))
+    curr_down = int(round_down(obook['best_bid'], params['divNumber']))
+
+    if params['startPrice'] == -1 or (params['startPrice'] >= curr_down and params['startPrice'] <= curr_up):
 
         if reset == True:
             lt.close_all_orders()
@@ -42,11 +51,11 @@ def perform_once(reset=False):
         else:
             orders = {}
 
-        print("Starting at {}".format(curr_price))
+        print("Starting at {} {}".format(curr_up, curr_down))
 
-        above_points = [i for i in range(curr_price+params['divNumber'], int(curr_price+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber'])]
-        below_points = [i for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
-        
+        above_points = [i for i in range(curr_up, int(curr_up+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber'])]
+        below_points = [i for i in range(curr_down, int(curr_down-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1)]
+    
 
         for i in above_points:
             if i not in orders:
@@ -76,4 +85,4 @@ def perform_all():
         curr_count = curr_count + 1
 
 if __name__ == "__main__":
-    perform_once() #call perform_all instead on live
+    perform_all()
