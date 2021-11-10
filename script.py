@@ -6,6 +6,7 @@ import threading
 
 parser = argparse.ArgumentParser("Grid Trader")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
+parser.add_argument("--maxOrder", help="Size of single order", type=int, default=100)
 parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=50)
 parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=50)
 parser.add_argument("--startPrice", help="Only starts if the current price is in the given range inputted here", type=int, default=-1)
@@ -13,7 +14,7 @@ parser.add_argument("--leverage", help="Leverage to use", type=int, default=10)
 
 params = vars(parser.parse_args())
 
-lt = liveTrading()
+lt = liveTrading(lev=params['leverage'])
 lt.set_leverage()
 
 def add_order(order_type, amount, price):
@@ -30,7 +31,6 @@ def perform_once(reset=False):
             lt.close_all_orders()
 
         orders_df = pd.DataFrame(lt.get_all_orders())
-        amt = lt.get_balance() * params['leverage']
 
         start_time = time.time()
 
@@ -38,14 +38,6 @@ def perform_once(reset=False):
             orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
         else:
             orders = {}
-
-        
-        total = obook['best_bid'] * amt
-        totalOrders = params['orderAbove'] + params['orderBelow']
-
-        single_size = int(total/totalOrders)
-        print(single_size)
-        
 
         print("Starting at {}".format(curr_price))
 
@@ -67,11 +59,11 @@ def perform_once(reset=False):
 
         for i in above_points:
             if i not in orders:
-                add_order('sell', single_size, i)
+                add_order('sell', params['maxOrder'], i)
 
         for i in below_points:
             if i not in orders:
-                add_order('buy', single_size, i)
+                add_order('buy', params['maxOrder'], i)
 
         print(time.time() - start_time)
 
