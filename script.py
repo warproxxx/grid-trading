@@ -13,17 +13,33 @@ params = vars(parser.parse_args())
 print(params)
 
 lt = liveTrading()
-lt.close_all_orders()
-obook = lt.get_orderbook()
+lt.set_leverage()
 
-amt = lt.get_balance() * params['leverage']
-total = obook['best_bid'] * amt
-totalOrders = params['orderAbove'] + params['orderBelow']
+def perform_once(reset=False):
+    obook = lt.get_orderbook()
+    curr_price = int(round(obook['best_bid'], -1))
 
-single_size = (total/totalOrders)/obook['best_bid']
-print(single_size)
-curr_price = round(obook['best_bid'], -1)
+    if params['startPrice'] == -1 or curr_price == params['startPrice']:
 
-print(curr_price)
+        if reset == True:
+            lt.close_all_orders()
 
-# if params['startPrice'] == -1
+        orders_df = pd.DataFrame(lt.get_all_orders())
+        
+        amt = lt.get_balance() * params['leverage']
+        total = obook['best_bid'] * amt
+        totalOrders = params['orderAbove'] + params['orderBelow']
+
+        single_size = (total/totalOrders)/obook['best_bid']
+        print(single_size)
+        
+
+        print("Starting at {}".format(curr_price))
+
+        for i in range(curr_price+params['divNumber'], int(curr_price+((params['orderAbove'] + 1) * params['divNumber'])), params['divNumber']):
+            print(i)
+
+
+        for i in range(curr_price+params['divNumber'], int(curr_price-((params['orderBelow'] + 1) * params['divNumber'])), params['divNumber'] * -1):
+            print(i)
+

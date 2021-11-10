@@ -62,6 +62,9 @@ class liveTrading():
                 
                 count = count + 1
     
+    def get_all_orders(self):
+        return self.get_unfilled_orders() + self.get_partial_orders()
+
     def get_unfilled_orders(self):
         return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'New'})['result']['data']
 
