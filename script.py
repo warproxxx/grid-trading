@@ -38,7 +38,6 @@ curr_down = int(round_down(startPrice, params['divNumber']))
 above_points = [i for i in range(curr_up, int(curr_up+((params['orderAbove']) * params['divNumber'])), params['divNumber'])]
 below_points = [i for i in range(curr_down, int(curr_down-((params['orderBelow']) * params['divNumber'])), params['divNumber'] * -1)]
 all_points = below_points + above_points
-print(all_points)
 
 def add_order(order_type, amount, price):
     t = threading.Thread(target=(lt.limit_trade), args=(order_type, amount, price,))
@@ -63,6 +62,7 @@ def perform_once(reset=False):
     print(orders)
 
     count = 0
+
     for i in all_points:
         if str(i) not in orders:
             if i > obook['best_bid']:

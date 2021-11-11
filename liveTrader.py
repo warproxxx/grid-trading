@@ -11,7 +11,7 @@ import inspect
 import sys
 
 class liveTrading():
-    def __init__(self, symbol='BTC/USD', lev=3, params={}):
+    def __init__(self, symbol='BTC/USD', lev=25, params={}):
         self.symbol = symbol
 
         self.lev = lev
