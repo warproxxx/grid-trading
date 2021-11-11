@@ -5,6 +5,8 @@ import pandas as pd
 import threading
 import math
 
+#50 per seconds
+
 def round_up(x, divNumber):
     return int(math.ceil(x / divNumber)) * divNumber
 
