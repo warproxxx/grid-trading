@@ -14,8 +14,8 @@ def round_down(x, divNumber):
 parser = argparse.ArgumentParser("Grid Trader")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
 parser.add_argument("--maxOrder", help="Size of single order", type=int, default=10)
-parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=50)
-parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=50)
+parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=20)
+parser.add_argument("--orderBelow", help="Number of orders below current price", type=int, default=20)
 parser.add_argument("--startPrice", help="Only starts if the current price is in the given range inputted here", type=int, default=-1)
 parser.add_argument("--sleepTime", help="Seconds delayed", type=int, default=60)
 
