@@ -13,7 +13,7 @@ def round_up(x, divNumber):
 def round_down(x, divNumber):
     return int(math.floor(x / divNumber)) * divNumber
 
-parser = argparse.ArgumentParser("Grid Trader")
+parser = argparse.ArgumentParser("script.py")
 parser.add_argument("--divNumber", help="Divisible price points to check at", type=int, default=10)
 parser.add_argument("--maxOrder", help="Size of single order", type=int, default=1)
 parser.add_argument("--orderAbove", help="Number of orders above current price", type=int, default=50)
