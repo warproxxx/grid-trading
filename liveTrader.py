@@ -63,24 +63,11 @@ class liveTrading():
                 count = count + 1
     
     def get_all_orders(self):
-        return self.get_unfilled_orders() + self.get_partial_orders()
-
-    def get_unfilled_orders(self):
         count = 0
         
         while count < 5:
             try:
-                return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'New'})['result']['data']
-            except Exception as e:
-                print(str(e))
-                count = count + 1
-
-    def get_partial_orders(self):
-        count = 0
-        
-        while count < 5:
-            try:
-                return self.exchange.v2_private_get_order_list({'symbol': 'BTCUSD', 'order_status': 'PartiallyFilled'})['result']['data']
+                return self.exchange.v2_private_get_order({'symbol': self.symbol_here})['result']
             except Exception as e:
                 print(str(e))
                 count = count + 1

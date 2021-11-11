@@ -62,13 +62,18 @@ def perform_once(reset=False):
 
     print(orders)
 
+    count = 0
     for i in all_points:
-        if i not in orders:
+        if str(i) not in orders:
             if i > obook['best_bid']:
                 otype = 'sell'
             else:
                 otype = 'buy'
             add_order(otype, params['maxOrder'], i)
+            count = count + 1
+
+            if count % 40 == 0:
+                time.sleep(1)
 
     print(time.time() - start_time)
 
