@@ -68,7 +68,7 @@ class gridTrader():
         if len(orders_df) > 0:
             self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
     
-    def cleanOrders(self, array):]
+    def cleanOrders(self, array):
         count = 0
         for price, order in self.orders.items():
             if int(price) not in array:
