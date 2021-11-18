@@ -11,6 +11,7 @@ class gridTrader():
         self.lt.set_leverage()
 
     def get_processed_vars(self):
+        params = self.params
         params['numberOfOrders'] = int(params['maxPositionSize']/params['sizePerOrder'])
         startTime = int(time.time())
 
@@ -23,7 +24,7 @@ class gridTrader():
         return params
 
     def getPositionSize(self):
-        return lt.get_position()[2]
+        return self.lt.get_position()[2]
 
     def checkSleep(self):
         if self.params['endTime'] == -1:
@@ -37,14 +38,14 @@ class gridTrader():
     def getLongOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_ask']
         curr_down = int(round_down(currPrice, self.params['divNumber']))
-        numberOfOrders = (totalSize/self.params['divNumber']) + 1
+        numberOfOrders = int((totalSize/self.params['divNumber']) + 1)
         below_points = [curr_down - (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return below_points
 
     def getShortOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_bid']
         curr_up = int(round_up(currPrice, self.params['divNumber']))
-        numberOfOrders = (totalSize/self.params['divNumber']) + 1
+        numberOfOrders = int((totalSize/self.params['divNumber']) + 1)
         above_points = [curr_up + (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return above_points
 
