@@ -1,6 +1,7 @@
 import argparse
 from gridTrader import gridTrader
 import time
+import sys
 
 parser = argparse.ArgumentParser("script.py")
     
@@ -13,7 +14,11 @@ parser.add_argument("--mode", help="long or short", type=string, default="long")
 
 gt = gridTrader(vars(parser.parse_args()))
 params = gt.get_processed_vars()
+helper = {'long': {'open': 'buy', 'close': 'sell'}, 'short': {'open': 'sell', 'close': 'buy'}}
 
+if params['mode'] not in ['long', 'short']:
+    print("Mode should be either long or short")
+    sys.exit()
 
 def perform_once():
     count = 0
@@ -22,26 +27,26 @@ def perform_once():
 
     gt.setOrders()
 
-    currentSize = gt.getPositionSize()
+    currentSize = abs(gt.getPositionSize())
     sizeDiff =  params['maxPositionSize'] - currentSize
 
     if sizeDiff >= 0  and gt.checkSleep():
-        buyOrderPriceArray = gt.getLongOrderPriceArray(sizeDiff)
+        openOrderPriceArray = gt.getOpenOrderPriceArray(sizeDiff)
 
-        for eachPrice in buyOrderPriceArray:
+        for eachPrice in openOrderPriceArray:
             if gt.notOrderAlreadyPlaced(eachPrice):
-                gt.placeOrder('buy', params['sizePerOrder'], eachPrice)
+                gt.placeOrder(helper[params['mode']]['open'], params['sizePerOrder'], eachPrice)
                 count = count + 1
 
                 if count % 10 == 0:
                     time.sleep(1)
                 
     if currentSize > 0  and gt.checkSleep():
-        sellOrderPriceArray = gt.getShortOrderPriceArray(currentSize)
+        closeOrderPriceArray = gt.getCloseOrderPriceArray(currentSize)
 
-        for eachPrice in sellOrderPriceArray:
+        for eachPrice in closeOrderPriceArray:
             if gt.notOrderAlreadyPlaced(eachPrice):
-                gt.placeOrder('sell', params['sizePerOrder'], eachPrice)
+                gt.placeOrder(helper[params['mode']]['close'], params['sizePerOrder'], eachPrice)
 
                 count = count + 1
 

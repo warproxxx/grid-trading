@@ -35,6 +35,18 @@ class gridTrader():
             else:
                 return False
 
+    def getOpenOrderPriceArray(self, totalSize):
+        if self.params['mode'] == 'long':
+            return self.getLongOrderPriceArray(totalSize)
+        elif self.params['mode'] == 'short':
+            return self.getShortOrderPriceArray(totalSize)
+
+    def getCloseOrderPriceArray(self, totalSize):
+        if self.params['mode'] == 'short':
+            return self.getLongOrderPriceArray(totalSize)
+        elif self.params['mode'] == 'long':
+            return self.getShortOrderPriceArray(totalSize)
+
     def getLongOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_ask']
         curr_down = int(round_down(currPrice, self.params['divNumber']))
