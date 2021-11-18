@@ -17,7 +17,7 @@ def perform_once():
     currentSize = gt.getPositionSize()
     sizeDiff =  params['maxPositionSize'] - currentSize
 
-    if sizeDiff > 0  and gt.checkSleep():
+    if sizeDiff >= 0  and gt.checkSleep():
         gt.setOrders()
         buyOrderPriceArray = gt.getLongOrderPriceArray(sizeDiff)
 
@@ -25,7 +25,7 @@ def perform_once():
             if gt.notOrderAlreadyPlaced(eachPrice):
                 gt.placeOrder('buy', params['sizePerOrder'], eachPrice)
 
-    if sizeDiff > 0  and gt.checkSleep():
+    if sizeDiff >= 0  and gt.checkSleep():
         sellOrderPriceArray = gt.getShortOrderPriceArray(currentSize)
 
         for eachPrice in orderPriceArray:
