@@ -1,5 +1,6 @@
 import argparse
 from utils import gridTrader
+import time
 
 parser = argparse.ArgumentParser("script.py")
 
@@ -30,10 +31,9 @@ def perform_once():
     if currentSize > 0  and gt.checkSleep():
         sellOrderPriceArray = gt.getShortOrderPriceArray(currentSize)
 
-        for eachPrice in orderPriceArray:
+        for eachPrice in sellOrderPriceArray:
             if gt.notOrderAlreadyPlaced(eachPrice):
                 gt.placeOrder('sell', params['sizePerOrder'], eachPrice)
-
 
     gt.cleanOrders(buyOrderPriceArray + sellOrderPriceArray)
 

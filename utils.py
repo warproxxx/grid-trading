@@ -38,14 +38,14 @@ class gridTrader():
     def getLongOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_ask']
         curr_down = int(round_down(currPrice, self.params['divNumber']))
-        numberOfOrders = int((totalSize/self.params['divNumber']) + 1)
+        numberOfOrders = int((totalSize/self.params['sizePerOrder']) + 1)
         below_points = [curr_down - (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return below_points
 
     def getShortOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_bid']
         curr_up = int(round_up(currPrice, self.params['divNumber']))
-        numberOfOrders = int((totalSize/self.params['divNumber']) + 1)
+        numberOfOrders = int((totalSize/self.params['sizePerOrder']) + 1)
         above_points = [curr_up + (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return above_points
 

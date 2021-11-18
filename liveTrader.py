@@ -27,6 +27,7 @@ class liveTrading():
                         'apiKey': apiKey,
                         'secret': apiSecret,
                         'enableRateLimit': True,
+                        'rateLimit': 100
                     })
 
         self.symbol_here = symbol.replace("/", "")
