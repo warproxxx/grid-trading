@@ -54,8 +54,11 @@ class gridTrader():
         
         if len(orders_df) > 0:
             self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
-        
-
+    
+    def cleanOrders(self, array):
+        for price, order_id in self.orders.items():
+            if price not in array:
+                self.remove_order(order_id)
 
     def notOrderAlreadyPlaced(self, price):
         if price not in self.orders:
@@ -65,6 +68,10 @@ class gridTrader():
 
     def placeOrder(self, order_type, amount, price):
         t = threading.Thread(target=(self.lt.limit_trade), args=(order_type, amount, price,))
+        t.start()
+
+    def remove_order(self, order_id):
+        t = threading.Thread(target=(lt.cancel_order), args=(order_id,))
         t.start()
 
 def round_up(x, divNumber):

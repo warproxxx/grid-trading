@@ -10,7 +10,6 @@ parser.add_argument("--timeframe", help="Run time in miniutes", type=int, defaul
 parser.add_argument("--sleepTime", help="Seconds delayed", type=int, default=15)
 parser.add_argument("--divNumber", help="Divisible Price points to check at", type=int, default=10)
 
-
 gt = gridTrader(vars(parser.parse_args()))
 params = gt.get_processed_vars()
 
@@ -20,21 +19,23 @@ def perform_once():
 
     if sizeDiff > 0  and gt.checkSleep():
         gt.setOrders()
-        orderPriceArray = gt.getLongOrderPriceArray(sizeDiff)
+        buyOrderPriceArray = gt.getLongOrderPriceArray(sizeDiff)
 
-        for eachPrice in orderPriceArray:
+        for eachPrice in buyOrderPriceArray:
             if gt.notOrderAlreadyPlaced(eachPrice):
                 gt.placeOrder('buy', params['sizePerOrder'], eachPrice)
 
     if sizeDiff > 0  and gt.checkSleep():
-        orderPriceArray = gt.getShortOrderPriceArray(currentSize)
+        sellOrderPriceArray = gt.getShortOrderPriceArray(currentSize)
 
         for eachPrice in orderPriceArray:
             if gt.notOrderAlreadyPlaced(eachPrice):
                 gt.placeOrder('sell', params['sizePerOrder'], eachPrice)
 
-def perform_all():
 
+    gt.cleanOrders(buyOrderPriceArray + sellOrderPriceArray)
+
+def perform_all():
     while True:
         perform_once()
         time.sleep(params['sleepTime'])
