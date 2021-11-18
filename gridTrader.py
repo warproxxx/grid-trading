@@ -68,10 +68,15 @@ class gridTrader():
         if len(orders_df) > 0:
             self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
     
-    def cleanOrders(self, array):
+    def cleanOrders(self, array):]
+        count = 0
         for price, order in self.orders.items():
             if int(price) not in array:
+                count = count + 1
                 self.remove_order(order['order_id'])
+
+                if count % 10 == 0:
+                    time.sleep(1)
 
     def notOrderAlreadyPlaced(self, price):
         if str(price) not in self.orders:

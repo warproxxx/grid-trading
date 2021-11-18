@@ -5,8 +5,8 @@ import sys
 
 parser = argparse.ArgumentParser("script.py")
     
-parser.add_argument("--maxPositionSize", help="Max Position Size", type=int, default=500)
-parser.add_argument("--sizePerOrder", help="Size per order", type=int, default=10)
+parser.add_argument("--maxPositionSize", help="Max Position Size", type=int, default=50)
+parser.add_argument("--sizePerOrder", help="Size per order", type=int, default=1)
 parser.add_argument("--timeframe", help="Run time in miniutes", type=int, default=240)
 parser.add_argument("--sleepTime", help="Seconds delayed", type=int, default=15)
 parser.add_argument("--divNumber", help="Divisible Price points to check at", type=int, default=10)
@@ -22,8 +22,8 @@ if params['mode'] not in ['long', 'short']:
 
 def perform_once():
     count = 0
-    buyOrderPriceArray = []
-    sellOrderPriceArray = []
+    openOrderPriceArray = []
+    closeOrderPriceArray = []
 
     gt.setOrders()
 
@@ -53,7 +53,7 @@ def perform_once():
                 if count % 10 == 0:
                     time.sleep(1)
 
-    gt.cleanOrders(buyOrderPriceArray + sellOrderPriceArray)
+    gt.cleanOrders(openOrderPriceArray + closeOrderPriceArray)
 
 def perform_all():
     while True:
