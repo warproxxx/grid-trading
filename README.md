@@ -1,7 +1,8 @@
+![Screenshot](ss.png)
+
 ## Instruction:
 1) ssh into the server
 2) ```screen -r -d grid```
-![Screenshot](ss.png)
 
 **Sample Input:**
 
