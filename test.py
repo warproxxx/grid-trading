@@ -1,5 +1,5 @@
 import argparse
-from utils import gridTrader
+from gridTrader import gridTrader
 import time
 
 parser = argparse.ArgumentParser("script.py")
@@ -13,5 +13,5 @@ parser.add_argument("--divNumber", help="Divisible Price points to check at", ty
 gt = gridTrader(vars(parser.parse_args()))
 params = gt.get_processed_vars()
 
-sizeDiff =  params['maxPositionSize']
-print(gt.getLongOrderPriceArray(sizeDiff))
+gt.setOrders()
+print(gt.orders)

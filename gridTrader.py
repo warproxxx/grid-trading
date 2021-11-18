@@ -38,14 +38,14 @@ class gridTrader():
     def getLongOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_ask']
         curr_down = int(round_down(currPrice, self.params['divNumber']))
-        numberOfOrders = int((totalSize/self.params['sizePerOrder']) + 1)
+        numberOfOrders = int((totalSize/self.params['sizePerOrder']))
         below_points = [curr_down - (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return below_points
 
     def getShortOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_bid']
         curr_up = int(round_up(currPrice, self.params['divNumber']))
-        numberOfOrders = int((totalSize/self.params['sizePerOrder']) + 1)
+        numberOfOrders = int(totalSize/self.params['sizePerOrder'])
         above_points = [curr_up + (i * self.params['divNumber']) for i in range(numberOfOrders)]
         return above_points
 
@@ -57,12 +57,12 @@ class gridTrader():
             self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
     
     def cleanOrders(self, array):
-        for price, order_id in self.orders.items():
-            if price not in array:
-                self.remove_order(order_id)
+        for price, order in self.orders.items():
+            if int(price) not in array:
+                self.remove_order(order['order_id'])
 
     def notOrderAlreadyPlaced(self, price):
-        if price not in self.orders:
+        if str(price) not in self.orders:
             return True
         else:
             return False
@@ -72,7 +72,7 @@ class gridTrader():
         t.start()
 
     def remove_order(self, order_id):
-        t = threading.Thread(target=(lt.cancel_order), args=(order_id,))
+        t = threading.Thread(target=(self.lt.cancel_order), args=(order_id,))
         t.start()
 
 def round_up(x, divNumber):

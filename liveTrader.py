@@ -30,6 +30,8 @@ class liveTrading():
                         'rateLimit': 100
                     })
 
+        self.exchange.enableRateLimit = True
+
         self.symbol_here = symbol.replace("/", "")
 
     
