@@ -16,9 +16,9 @@ class gridTrader():
         params['numberOfOrders'] = int(params['maxPositionSize']/params['sizePerOrder'])
         startTime = int(time.time())
 
-        params['endTime'] = -1
+        params['endTime'] = 10000
 
-        if params['timeframe'] != -1:
+        if params['timeframe'] != 10000:
             params['endTime'] = startTime + 60 * params['timeframe']
 
         self.params = params
@@ -28,7 +28,7 @@ class gridTrader():
         return self.lt.get_position()[2]
 
     def checkSleep(self):
-        if self.params['endTime'] == -1:
+        if self.params['endTime'] == 10000:
             return True
         else:
             if time.time() < self.params['endTime']:
