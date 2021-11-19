@@ -52,7 +52,11 @@ def perform_once():
                     if count % 10 == 0:
                         time.sleep(1)
 
-        gt.cleanOrders(openOrderPriceArray + closeOrderPriceArray)
+        combinedOrders = openOrderPriceArray + closeOrderPriceArray
+        gt.cleanOrders(combinedOrders)
+
+        if len(combinedOrders) == 0:
+            gt.marketClosePosition()
 
 def perform_all():
     while True:

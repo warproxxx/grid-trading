@@ -104,6 +104,15 @@ class gridTrader():
         t = threading.Thread(target=(self.lt.cancel_order), args=(order_id,))
         t.start()
 
+    def marketClosePosition(self):
+        pos, entry, size = self.lt.get_position()
+
+        if pos != "NONE":
+            if size > 0:
+                self.lt.market_trade('buy', abs(size))
+            elif size < 0:
+                self.lt.market_trade('sell', abs(size))
+
 def round_up(x, divNumber):
     return int(math.ceil(x / divNumber)) * divNumber
 
