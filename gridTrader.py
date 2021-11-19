@@ -66,13 +66,14 @@ class gridTrader():
         self.orders = {}
         orders = self.lt.get_all_orders()
 
-        if 'error' not in orders:
+        if 'rnd_err' not in orders:
             orders_df = pd.DataFrame()
             
             if len(orders_df) > 0:
                 self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
+                print("Orders are:")
                 print(self.orders)
-                
+
             return True
 
         return False

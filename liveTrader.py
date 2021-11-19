@@ -51,8 +51,6 @@ class liveTrading():
             if diff > 0:
                 print("Rate limit exceeded. Sleeping for {} secs".format(diff))
                 time.sleep(diff)
-        else:
-            print("not found")
 
 
     def set_leverage(self):
@@ -89,7 +87,7 @@ class liveTrading():
                 print(str(e))
                 count = count + 1
 
-        return {'error'}
+        return {'rnd_err': ''}
 
     def close_all_orders(self, close_stop=False):
         count = 0
