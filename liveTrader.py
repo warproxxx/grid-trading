@@ -44,11 +44,15 @@ class liveTrading():
 
     def check_rate_limit(self):
         details = self.exchange.last_json_response
-        diff = float(details['rate_limit_reset_ms'])/1000 - float(details['time_now'])
 
-        if diff > 0:
-            print("Rate limit exceeded. Sleeping for {} secs".format(diff))
-            time.sleep(diff)
+        if 'rate_limit_reset_ms' in details:
+            diff = float(details['rate_limit_reset_ms'])/1000 - float(details['time_now'])
+
+            if diff > 0:
+                print("Rate limit exceeded. Sleeping for {} secs".format(diff))
+                time.sleep(diff)
+        else:
+            print("not found")
 
 
     def set_leverage(self):
