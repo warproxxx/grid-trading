@@ -31,6 +31,7 @@ def perform_once():
 
         if sizeDiff >= 0  and gt.checkSleep():
             openOrderPriceArray = gt.getOpenOrderPriceArray(sizeDiff)
+            print("Open Array: {}".format(openOrderPriceArray))
 
             for eachPrice in openOrderPriceArray:
                 if gt.notOrderAlreadyPlaced(eachPrice):
@@ -42,6 +43,7 @@ def perform_once():
                     
         if currentSize > 0  and gt.checkSleep():
             closeOrderPriceArray = gt.getCloseOrderPriceArray(currentSize)
+            print("Close Array: {}".format(closeOrderPriceArray))
 
             for eachPrice in closeOrderPriceArray:
                 if gt.notOrderAlreadyPlaced(eachPrice):
