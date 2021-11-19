@@ -77,8 +77,6 @@ class gridTrader():
         return False
 
     def cleanOrders(self, array):
-        self.lt.check_rate_limit()
-        
         count = 0
         for price, order in self.orders.items():
             if int(price) not in array:
@@ -95,6 +93,8 @@ class gridTrader():
             return False
 
     def placeOrder(self, order_type, amount, price):
+        self.lt.check_rate_limit()
+        
         t = threading.Thread(target=(self.lt.limit_trade), args=(order_type, amount, price,))
         t.start()
 
