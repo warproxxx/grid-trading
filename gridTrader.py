@@ -94,11 +94,13 @@ class gridTrader():
 
     def placeOrder(self, order_type, amount, price):
         self.lt.check_rate_limit()
-        
+
         t = threading.Thread(target=(self.lt.limit_trade), args=(order_type, amount, price,))
         t.start()
 
     def remove_order(self, order_id):
+        self.lt.check_rate_limit()
+        
         t = threading.Thread(target=(self.lt.cancel_order), args=(order_id,))
         t.start()
 
