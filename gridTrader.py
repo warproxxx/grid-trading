@@ -5,9 +5,9 @@ import threading
 import math
 
 class gridTrader():
-    def __init__(self, params):
+    def __init__(self, symbol='BTC/USD', params):
         self.params = params
-        self.lt = liveTrading(lev=25)
+        self.lt = liveTrading(symbol=symbol, lev=25)
         self.lt.set_leverage()
         self.lt.check_rate_limit()
 
