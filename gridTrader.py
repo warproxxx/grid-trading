@@ -71,8 +71,6 @@ class gridTrader():
             
             if len(orders_df) > 0:
                 self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
-                print("Orders are:")
-                print(self.orders)
 
             return True
 
