@@ -36,10 +36,20 @@ class liveTrading():
 
     
         lm = self.exchange.load_markets()
+
         self.increment = lm[self.symbol]['precision']['amount']
 
         number_str = '{0:f}'.format(self.increment)
         self.round_places = len(number_str.split(".")[1])
+
+    def check_rate_limit(self):
+        self.exchange.fetch_balance()
+        details = self.exchange.last_json_response
+        diff = float(details['rate_limit_reset_ms'])/1000 - float(details['time_now'])
+
+        if diff > 0:
+            print("Rate limit exceeded. Sleeping for {} secs".format(diff))
+            time.sleep(diff)
 
     def set_leverage(self):
         count = 0

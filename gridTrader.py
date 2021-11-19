@@ -9,6 +9,7 @@ class gridTrader():
         self.params = params
         self.lt = liveTrading(lev=25)
         self.lt.set_leverage()
+        self.lt.check_rate_limit()
 
     def get_processed_vars(self):
         params = self.params
@@ -74,8 +75,10 @@ class gridTrader():
             return True
 
         return False
-            
+
     def cleanOrders(self, array):
+        self.lt.check_rate_limit()
+        
         count = 0
         for price, order in self.orders.items():
             if int(price) not in array:
