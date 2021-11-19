@@ -75,6 +75,8 @@ class liveTrading():
                 print(str(e))
                 count = count + 1
 
+        return {'error'}
+
     def close_all_orders(self, close_stop=False):
         count = 0
         

@@ -25,35 +25,34 @@ def perform_once():
     openOrderPriceArray = []
     closeOrderPriceArray = []
 
-    gt.setOrders()
+    if gt.setOrders():
+        currentSize = abs(gt.getPositionSize())
+        sizeDiff =  params['maxPositionSize'] - currentSize
 
-    currentSize = abs(gt.getPositionSize())
-    sizeDiff =  params['maxPositionSize'] - currentSize
+        if sizeDiff >= 0  and gt.checkSleep():
+            openOrderPriceArray = gt.getOpenOrderPriceArray(sizeDiff)
 
-    if sizeDiff >= 0  and gt.checkSleep():
-        openOrderPriceArray = gt.getOpenOrderPriceArray(sizeDiff)
+            for eachPrice in openOrderPriceArray:
+                if gt.notOrderAlreadyPlaced(eachPrice):
+                    gt.placeOrder(helper[params['mode']]['open'], params['sizePerOrder'], eachPrice)
+                    count = count + 1
 
-        for eachPrice in openOrderPriceArray:
-            if gt.notOrderAlreadyPlaced(eachPrice):
-                gt.placeOrder(helper[params['mode']]['open'], params['sizePerOrder'], eachPrice)
-                count = count + 1
+                    if count % 10 == 0:
+                        time.sleep(1)
+                    
+        if currentSize > 0  and gt.checkSleep():
+            closeOrderPriceArray = gt.getCloseOrderPriceArray(currentSize)
 
-                if count % 10 == 0:
-                    time.sleep(1)
-                
-    if currentSize > 0  and gt.checkSleep():
-        closeOrderPriceArray = gt.getCloseOrderPriceArray(currentSize)
+            for eachPrice in closeOrderPriceArray:
+                if gt.notOrderAlreadyPlaced(eachPrice):
+                    gt.placeOrder(helper[params['mode']]['close'], params['sizePerOrder'], eachPrice)
 
-        for eachPrice in closeOrderPriceArray:
-            if gt.notOrderAlreadyPlaced(eachPrice):
-                gt.placeOrder(helper[params['mode']]['close'], params['sizePerOrder'], eachPrice)
+                    count = count + 1
 
-                count = count + 1
+                    if count % 10 == 0:
+                        time.sleep(1)
 
-                if count % 10 == 0:
-                    time.sleep(1)
-
-    gt.cleanOrders(openOrderPriceArray + closeOrderPriceArray)
+        gt.cleanOrders(openOrderPriceArray + closeOrderPriceArray)
 
 def perform_all():
     while True:

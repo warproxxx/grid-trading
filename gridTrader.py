@@ -63,11 +63,18 @@ class gridTrader():
 
     def setOrders(self):
         self.orders = {}
-        orders_df = pd.DataFrame(self.lt.get_all_orders())
-        
-        if len(orders_df) > 0:
-            self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
-    
+        orders = self.lt.get_all_orders()
+
+        if 'error' not in orders:
+            orders_df = pd.DataFrame()
+            
+            if len(orders_df) > 0:
+                self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
+            
+            return True
+
+        return False
+            
     def cleanOrders(self, array):
         count = 0
         for price, order in self.orders.items():
