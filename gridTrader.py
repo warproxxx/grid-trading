@@ -71,7 +71,8 @@ class gridTrader():
             
             if len(orders_df) > 0:
                 self.orders = orders_df[['price', 'order_id']].set_index('price').T.to_dict()
-            
+                print(self.orders)
+                
             return True
 
         return False
@@ -100,7 +101,7 @@ class gridTrader():
 
     def remove_order(self, order_id):
         self.lt.check_rate_limit()
-        
+
         t = threading.Thread(target=(self.lt.cancel_order), args=(order_id,))
         t.start()
 
