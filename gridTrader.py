@@ -5,7 +5,7 @@ import threading
 import math
 
 class gridTrader():
-    def __init__(self, symbol='BTC/USD', params):
+    def __init__(self, params, symbol='BTC/USD'):
         self.params = params
         self.lt = liveTrading(symbol=symbol, lev=25)
         self.lt.set_leverage()
@@ -50,16 +50,16 @@ class gridTrader():
 
     def getLongOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_ask']
-        curr_down = int(round_down(currPrice, self.params['divNumber']))
+        curr_down = int(round_down(currPrice, self.params['spread']))
         numberOfOrders = int((totalSize/self.params['sizePerOrder']))
-        below_points = [curr_down - (i * self.params['divNumber']) for i in range(numberOfOrders)]
+        below_points = [curr_down - (i * self.params['spread']) for i in range(numberOfOrders)]
         return below_points
 
     def getShortOrderPriceArray(self, totalSize):
         currPrice = self.lt.get_orderbook()['best_bid']
-        curr_up = int(round_up(currPrice, self.params['divNumber']))
+        curr_up = int(round_up(currPrice, self.params['spread']))
         numberOfOrders = int(totalSize/self.params['sizePerOrder'])
-        above_points = [curr_up + (i * self.params['divNumber']) for i in range(numberOfOrders)]
+        above_points = [curr_up + (i * self.params['spread']) for i in range(numberOfOrders)]
         return above_points
 
     def setOrders(self):
@@ -113,9 +113,9 @@ class gridTrader():
             elif size < 0:
                 self.lt.market_trade('sell', abs(size))
 
-def round_up(x, divNumber):
-    return int(math.ceil(x / divNumber)) * divNumber
+def round_up(x, spread):
+    return int(math.ceil(x / spread)) * spread
 
-def round_down(x, divNumber):
-    return int(math.floor(x / divNumber)) * divNumber
+def round_down(x, spread):
+    return int(math.floor(x / spread)) * spread
     
